@@ -1,0 +1,24 @@
+[package]
+name = "axum-boot-starter-data-redis"
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+keywords.workspace = true
+categories.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Redis data starter for the AxumBoot framework"
+
+[dependencies]
+axum-boot-core = { path = "../axum-boot-core", version = "0.1.0" }
+redis.workspace = true
+deadpool-redis.workspace = true
+tokio.workspace = true
+serde.workspace = true
+async-trait.workspace = true
+
+[dev-dependencies]
+tokio-test.workspace = true

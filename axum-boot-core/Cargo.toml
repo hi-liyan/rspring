@@ -1,0 +1,47 @@
+[package]
+name = "axum-boot-core"
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+keywords.workspace = true
+categories.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Core functionality for the AxumBoot framework"
+
+[dependencies]
+# Core async runtime
+tokio.workspace = true
+async-trait.workspace = true
+futures.workspace = true
+
+# Serialization
+serde.workspace = true
+serde_json.workspace = true
+
+# Configuration
+config.workspace = true
+toml.workspace = true
+serde_yaml.workspace = true
+
+# Error handling
+anyhow.workspace = true
+thiserror.workspace = true
+
+# Logging
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+# Utilities
+chrono.workspace = true
+uuid.workspace = true
+once_cell.workspace = true
+
+# Re-export macros
+axum-boot-macro = { path = "../axum-boot-macro", version = "0.1.0" }
+
+[dev-dependencies]
+tokio-test.workspace = true

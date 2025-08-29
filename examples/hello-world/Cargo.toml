@@ -1,0 +1,8 @@
+[package]
+name = "hello-world"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum-boot-core = { path = "../../axum-boot-core" }
+tokio = { workspace = true }
