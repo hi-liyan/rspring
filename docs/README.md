@@ -31,33 +31,33 @@
 
 - [**rspring-core**](modules/rspring-core.md) - 核心框架模块
   - 应用上下文和生命周期管理
-  - 依赖注入容器实现
-  - 配置管理系统
-  - 统一错误处理
+  - 通用配置系统
+  - 依赖注入容器
+  - 核心错误处理和日志
 
-- [**rspring-macro**](modules/rspring-macro.md) - 宏系统模块  
-  - 注解驱动的组件声明
-  - 代码生成和宏展开
-  - 编译时依赖注入
-  - 自定义派生宏
+- [**rspring-starter-web**](modules/rspring-starter-web.md) - Web 开发 Starter
+  - Axum 框架集成和简化
+  - REST API 控制器注解
+  - 统一响应格式和错误处理
+  - 中间件和路由管理
 
-- [**rspring-web**](modules/rspring-web.md) - Web 开发启动器
-  - REST API 控制器
-  - 路由和中间件管理
-  - 请求/响应处理
-  - 统一错误处理
-
-- [**rspring-data-mysql**](modules/rspring-data-mysql.md) - MySQL 数据访问启动器
-  - 数据库连接池管理
-  - Repository 模式实现
+- [**rspring-starter-data-sqlx**](modules/rspring-starter-data-sqlx.md) - SQLx 数据访问 Starter
+  - SQLx 集成和连接池管理
+  - 多数据库支持（Feature 选择）
   - 声明式事务管理
-  - 查询构建器
+  - 数据源自动配置
 
-- [**rspring-data-redis**](modules/rspring-data-redis.md) - Redis 缓存启动器
-  - 缓存注解和模板
-  - 多种数据结构操作
-  - 分布式锁实现
-  - 序列化和连接池
+- [**rspring-starter-data-redis**](modules/rspring-starter-data-redis.md) - Redis 数据 Starter
+  - Redis 客户端集成
+  - 简化的 Redis 操作 API
+  - 多数据结构支持
+  - 连接池和序列化管理
+
+- [**rspring-starter-mail**](modules/rspring-starter-mail.md) - 邮件发送 Starter
+  - 邮件客户端集成
+  - 邮件模板系统
+  - SMTP 配置和自动装配
+  - 异步邮件发送和附件支持
 
 ### 🔧 API 参考
 - [**rspring-core**](api/core.md) - 核心库 API
@@ -73,10 +73,14 @@
 - [**电商系统**](examples/ecommerce.md) - 微服务架构示例
 - [**API 网关**](examples/api-gateway.md) - 网关服务示例
 
-### 🛠️ 扩展开发
-- [**自定义 Starter**](guide/custom-starter.md) - 开发自己的启动器
-- [**中间件开发**](guide/middleware-development.md) - 自定义中间件
-- [**插件系统**](guide/plugin-system.md) - 插件架构和开发
+### 🚀 扩展开发
+- [**Starter 开发指南**](modules/starter-development-guide.md) - 自定义 Starter 开发
+  - 自动装配实现原理
+  - Starter 开发最佳实践
+  - 条件装配和配置绑定
+  - 测试和发布指南
+- [中间件开发](guide/middleware-development.md) - 自定义中间件
+- [插件系统](guide/plugin-system.md) - 插件架构和开发
 
 ### 🤝 贡献指南
 - [**贡献指南**](contributing/contributing.md) - 如何为项目贡献代码

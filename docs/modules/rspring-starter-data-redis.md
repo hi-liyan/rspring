@@ -1,16 +1,18 @@
-# rspring-data-redis 模块文档
+# rspring-starter-data-redis
 
-## 📋 概述
+[![crates.io](https://img.shields.io/crates/v/rspring-starter-data-redis.svg)](https://crates.io/crates/rspring-starter-data-redis)
+[![docs.rs](https://img.shields.io/docsrs/rspring-starter-data-redis)](https://docs.rs/rspring-starter-data-redis)
 
-`rspring-data-redis` 是 RSpring 框架的 Redis 数据访问启动器模块，提供了基于 `redis-rs` 的缓存和数据存储解决方案。它借鉴了 Spring Data Redis 的设计理念，提供了注解驱动的缓存管理和类型安全的 Redis 操作。
+**rspring-starter-data-redis** 是 RSpring 框架的 Redis Starter，集成 Rust 最常用的 Redis 客户端库并提供了简化的 Redis 操作。通过自动装配和丰富的配置选项，让 Redis 的使用变得更加简单。
 
-### 🎯 核心特性
+## 🎯 核心功能
 
-- 🚀 **零配置启动** - 自动配置 Redis 连接池
-- 📝 **注解驱动** - Spring Cache 风格的缓存注解
-- 🔄 **多数据结构** - 支持 String、Hash、List、Set、ZSet 等
-- 📊 **序列化支持** - JSON、MessagePack 等多种序列化方式
-- 🔧 **连接池管理** - 智能的连接池配置
+- **Redis 客户端集成** - 集成 Rust 最优秀的 Redis 客户端库
+- **自动装配** - 自动配置 Redis 连接和连接池
+- **简化操作** - 提供简洁的 API 封装，简化 Redis 操作
+- **多数据结构** - 支持 String、Hash、List、Set、ZSet 等数据结构
+- **序列化支持** - 内置 JSON、MessagePack 等序列化支持
+- **连接池管理** - 高效的连接池管理和配置
 - 📈 **性能监控** - 内置的 Redis 性能分析
 - 🛡️ **故障恢复** - 自动重连和故障转移
 

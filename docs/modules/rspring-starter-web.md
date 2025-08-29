@@ -1,16 +1,18 @@
-# rspring-web 模块文档
+# rspring-starter-web
 
-## 📋 概述
+[![crates.io](https://img.shields.io/crates/v/rspring-starter-web.svg)](https://crates.io/crates/rspring-starter-web)
+[![docs.rs](https://img.shields.io/docsrs/rspring-starter-web)](https://docs.rs/rspring-starter-web)
 
-`rspring-web` 是 RSpring 框架的 Web 开发启动器模块，提供了快速构建 REST API 的完整解决方案。它基于 Axum 框架，提供了 Spring Boot 风格的注解驱动开发体验。
+**rspring-starter-web** 是 RSpring 框架的 Web 开发 Starter，集成 Axum 框架并提供了类似 Spring Boot 的 Web 开发体验。通过自动装配和简化的注解，让 Axum 的使用变得更加简单。
 
-### 🎯 核心特性
+## 🎯 核心功能
 
-- 🚀 **零配置启动** - 开箱即用的 Web 服务器
-- 📝 **注解驱动** - Spring Boot 风格的控制器注解
-- 🔄 **自动路由** - 基于注解的自动路由注册
-- 📊 **统一响应** - 标准化的 API 响应格式
-- 🛡️ **错误处理** - 全局异常处理机制
+- **Axum 集成** - 无缝集成 Axum 框架，简化使用复杂度
+- **自动装配** - 自动配置 Web 服务器和路由
+- **注解驱动** - Spring Boot 风格的控制器注解
+- **统一响应** - 标准化的 API 响应格式和错误处理
+- **分页支持** - 内置的分页数据结构
+- **中间件支持** - CORS、日志等常用中间件集成
 - 🔧 **中间件支持** - 灵活的中间件配置
 - 📈 **监控集成** - 内置健康检查和指标收集
 
