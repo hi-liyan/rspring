@@ -12,6 +12,9 @@ edition.workspace = true
 rust-version.workspace = true
 description = "Core functionality for the AxumBoot framework"
 
+[lib]
+proc-macro = true
+
 [dependencies]
 # Core async runtime
 tokio.workspace = true
@@ -35,13 +38,15 @@ thiserror.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 
+# Proc macro dependencies
+proc-macro2.workspace = true
+quote.workspace = true
+syn.workspace = true
+
 # Utilities
 chrono.workspace = true
 uuid.workspace = true
 once_cell.workspace = true
-
-# Re-export macros
-axum-boot-macro = { path = "../axum-boot-macro", version = "0.1.0" }
 
 [dev-dependencies]
 tokio-test.workspace = true

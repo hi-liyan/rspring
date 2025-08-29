@@ -12,15 +12,33 @@ edition.workspace = true
 rust-version.workspace = true
 description = "Web starter for the AxumBoot framework"
 
+[lib]
+proc-macro = true
+
 [dependencies]
+# Core framework
 axum-boot-core = { path = "../axum-boot-core", version = "0.1.0" }
+
+# Web framework
 axum.workspace = true
 tower.workspace = true
 tower-http.workspace = true
 hyper.workspace = true
+
+# Async runtime
 tokio.workspace = true
+
+# Serialization
 serde.workspace = true
 serde_json.workspace = true
+
+# Proc macro dependencies
+proc-macro2.workspace = true
+quote.workspace = true
+syn.workspace = true
+
+# Utilities
+chrono.workspace = true
 
 [dev-dependencies]
 tokio-test.workspace = true

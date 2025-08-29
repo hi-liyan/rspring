@@ -1,7 +1,6 @@
 [workspace]
 members = [
     "axum-boot-core",
-    "axum-boot-macro", 
     "axum-boot-starter-web",
     "axum-boot-starter-data-mysql",
     "axum-boot-starter-data-redis",
@@ -34,7 +33,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 # Web framework
 axum = { version = "0.7", features = ["macros"] }
 tower = "0.4"
-tower-http = { version = "0.5", features = ["cors", "trace", "compression", "fs"] }
+tower-http = { version = "0.5", features = ["cors", "trace", "fs"] }
 hyper = { version = "1.0", features = ["full"] }
 
 # Configuration
