@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(cargo check:*)",
-      "Bash(cargo build:*)"
+      "Bash(cargo build:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
