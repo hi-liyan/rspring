@@ -1,90 +1,67 @@
-use thiserror::Error;
+//! 错误处理模块
+//! 
+//! 提供统一的错误类型定义和处理机制，支持类型安全的错误处理
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub mod types;
+pub mod handler;
 
-#[derive(Error, Debug)]
-pub enum Error {
-    #[error("配置错误: {0}")]
-    Configuration(#[from] config::ConfigError),
-    
-    #[error("IO错误: {0}")]
-    Io(#[from] std::io::Error),
-    
-    #[error("序列化错误: {0}")]
-    Serialization(#[from] serde_json::Error),
-    
-    #[error("YAML序列化错误: {0}")]
-    YamlSerialization(#[from] serde_yaml::Error),
-    
-    #[error("TOML序列化错误: {0}")]
-    TomlSerialization(#[from] toml::de::Error),
-    
-    #[error("容器错误: {message}")]
-    Container { message: String },
-    
-    #[error("组件未找到: {component}")]
-    ComponentNotFound { component: String },
-    
-    #[error("依赖注入错误: {message}")]
-    DependencyInjection { message: String },
-    
-    #[error("验证错误: {message}")]
-    Validation { message: String },
-    
-    #[error("业务错误: {message} (错误码: {code})")]
-    Business { message: String, code: String },
-    
-    #[error("资源未找到: {resource}")]
-    ResourceNotFound { resource: String },
-    
-    #[error("应用程序错误: {message}")]
-    Application { message: String },
-    
-    #[error("运行时错误: {message}")]
-    Runtime { message: String },
+// 重新导出常用类型和函数
+pub use types::{Error, Result};
+pub use handler::{ErrorHandler, ErrorResponse};
+
+/// 全局错误处理器实例
+/// 
+/// 提供便捷的全局错误处理功能
+pub static ERROR_HANDLER: once_cell::sync::Lazy<ErrorHandler> = 
+    once_cell::sync::Lazy::new(|| ErrorHandler::new());
+
+/// 便捷的错误处理函数
+/// 
+/// # 示例
+/// ```rust
+/// use rspring_core::error::handle_error;
+/// 
+/// let error = Error::validation("输入无效");
+/// let response = handle_error(&error, Some("用户验证"));
+/// ```
+pub fn handle_error(error: &Error, context: Option<&str>) -> ErrorResponse {
+    ERROR_HANDLER.handle_error(error, context)
 }
 
-impl Error {
-    /// 创建容器错误
-    pub fn container(message: impl Into<String>) -> Self {
-        Self::Container { message: message.into() }
+/// 便捷的结果处理函数
+/// 
+/// # 示例
+/// ```rust
+/// use rspring_core::error::handle_result;
+/// 
+/// let result: Result<String> = Ok("success".to_string());
+/// let handled = handle_result(result, Some("操作上下文"));
+/// ```
+pub fn handle_result<T>(result: Result<T>, context: Option<&str>) -> std::result::Result<T, ErrorResponse> {
+    ERROR_HANDLER.handle_result(result, context)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// 测试全局错误处理
+    #[test]
+    fn test_global_error_handling() {
+        let error = Error::business("TEST_ERROR", "测试错误");
+        let response = handle_error(&error, Some("全局测试"));
+        
+        assert_eq!(response.code, "TEST_ERROR");
+        assert_eq!(response.message, "测试错误");
     }
-    
-    /// 创建组件未找到错误
-    pub fn component_not_found(component: impl Into<String>) -> Self {
-        Self::ComponentNotFound { component: component.into() }
-    }
-    
-    /// 创建依赖注入错误
-    pub fn dependency_injection(message: impl Into<String>) -> Self {
-        Self::DependencyInjection { message: message.into() }
-    }
-    
-    /// 创建验证错误
-    pub fn validation(message: impl Into<String>) -> Self {
-        Self::Validation { message: message.into() }
-    }
-    
-    /// 创建业务错误
-    pub fn business(code: impl Into<String>, message: impl Into<String>) -> Self {
-        Self::Business { 
-            code: code.into(), 
-            message: message.into() 
-        }
-    }
-    
-    /// 创建资源未找到错误
-    pub fn resource_not_found(resource: impl Into<String>) -> Self {
-        Self::ResourceNotFound { resource: resource.into() }
-    }
-    
-    /// 创建应用程序错误
-    pub fn application(message: impl Into<String>) -> Self {
-        Self::Application { message: message.into() }
-    }
-    
-    /// 创建运行时错误
-    pub fn runtime(message: impl Into<String>) -> Self {
-        Self::Runtime { message: message.into() }
+
+    /// 测试全局结果处理
+    #[test] 
+    fn test_global_result_handling() {
+        let success_result: Result<String> = Ok("success".to_string());
+        let handled = handle_result(success_result, None);
+        
+        assert!(handled.is_ok());
+        assert_eq!(handled.unwrap(), "success");
     }
 }
