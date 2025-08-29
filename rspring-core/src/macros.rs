@@ -28,18 +28,23 @@ pub fn rspring_application(_args: TokenStream, input: TokenStream) -> TokenStrea
         #input
 
         impl #struct_name {
+            /// 运行 RSpring 应用程序
             pub async fn run() -> crate::Result<()> {
                 // 初始化日志系统
-                tracing_subscriber::fmt()
-                    .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
-                    .init();
+                let logging_config = crate::config::LoggingConfig::default();
+                crate::logging::init_logging(&logging_config)?;
 
                 tracing::info!("启动 RSpring 应用程序");
 
                 // 创建应用上下文
-                let context = crate::ApplicationContext::new().await?;
+                let context = crate::ApplicationContext::new()?;
                 
                 tracing::info!("应用上下文初始化完成");
+
+                // 执行自动装配
+                context.auto_wire().await?;
+                
+                tracing::info!("自动装配完成，应用程序运行中");
 
                 // 保持运行（非Web应用需要自定义实现）
                 tokio::signal::ctrl_c().await.map_err(|e| {
