@@ -18,7 +18,7 @@ documentation = "https://github.com/hi-liyan/rspring"
 keywords = ["spring", "rust", "web", "framework", "dependency-injection"]
 categories = ["web-programming::http-server", "web-programming"]
 edition = "2021"
-rust-version = "1.90"
+rust-version = "1.82"
 
 [workspace.dependencies]
 # Core dependencies
