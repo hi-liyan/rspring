@@ -25,6 +25,40 @@
 - [**安全性**](guide/security.md) - 安全开发最佳实践
 - [**测试策略**](guide/testing.md) - 单元测试和集成测试
 
+### 📚 模块文档
+
+深入了解每个模块的架构、API 和最佳实践：
+
+- [**axum-boot-core**](modules/axum-boot-core.md) - 核心框架模块
+  - 应用上下文和生命周期管理
+  - 依赖注入容器实现
+  - 配置管理系统
+  - 统一错误处理
+
+- [**axum-boot-macro**](modules/axum-boot-macro.md) - 宏系统模块  
+  - 注解驱动的组件声明
+  - 代码生成和宏展开
+  - 编译时依赖注入
+  - 自定义派生宏
+
+- [**axum-boot-starter-web**](modules/axum-boot-starter-web.md) - Web 开发启动器
+  - REST API 控制器
+  - 路由和中间件管理
+  - 请求/响应处理
+  - 统一错误处理
+
+- [**axum-boot-starter-data-mysql**](modules/axum-boot-starter-data-mysql.md) - MySQL 数据访问启动器
+  - 数据库连接池管理
+  - Repository 模式实现
+  - 声明式事务管理
+  - 查询构建器
+
+- [**axum-boot-starter-data-redis**](modules/axum-boot-starter-data-redis.md) - Redis 缓存启动器
+  - 缓存注解和模板
+  - 多种数据结构操作
+  - 分布式锁实现
+  - 序列化和连接池
+
 ### 🔧 API 参考
 - [**axum-boot-core**](api/core.md) - 核心库 API
 - [**axum-boot-macro**](api/macro.md) - 宏和注解 API

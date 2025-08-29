@@ -33,10 +33,12 @@
 - [**错误处理**](docs/guide/error-handling.md) - 统一错误处理机制
 - [**常见问题**](docs/guide/faq.md) - FAQ 和故障排除
 
-### 🔧 API 参考
-- [**axum-boot-core**](docs/api/core.md) - 核心库 API
-- [**axum-boot-macro**](docs/api/macro.md) - 宏系统 API
-- [**完整 API 文档**](docs/api/) - 所有模块的 API 参考
+### 🔧 模块文档
+- [**axum-boot-core**](docs/modules/axum-boot-core.md) - 核心框架模块
+- [**axum-boot-macro**](docs/modules/axum-boot-macro.md) - 宏系统模块
+- [**axum-boot-starter-web**](docs/modules/axum-boot-starter-web.md) - Web 开发启动器
+- [**axum-boot-starter-data-mysql**](docs/modules/axum-boot-starter-data-mysql.md) - MySQL 数据访问启动器
+- [**axum-boot-starter-data-redis**](docs/modules/axum-boot-starter-data-redis.md) - Redis 缓存启动器
 
 ### 💡 示例项目
 - [**Hello World**](docs/examples/hello-world.md) - 基础入门示例
