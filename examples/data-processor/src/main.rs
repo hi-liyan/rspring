@@ -1,4 +1,4 @@
-use axum_boot_core::*;
+use rspring_core::*;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::time::{sleep, Duration};
@@ -173,8 +173,8 @@ impl TaskSchedulerService {
     }
 }
 
-/// CLI应用程序入口 - 展示 axum-boot-core 的非Web使用场景
-#[axum_boot_application]
+/// CLI应用程序入口 - 展示 rspring-core 的非Web使用场景
+#[rspring_application]
 pub struct DataProcessorApplication;
 
 #[tokio::main]

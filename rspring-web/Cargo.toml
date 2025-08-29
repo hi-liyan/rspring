@@ -1,5 +1,5 @@
 [package]
-name = "axum-boot-core"
+name = "rspring-web"
 version.workspace = true
 authors.workspace = true
 license.workspace = true
@@ -10,33 +10,27 @@ keywords.workspace = true
 categories.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-description = "Core functionality for the AxumBoot framework"
+description = "Web starter for the RSpring framework"
 
 [lib]
 proc-macro = true
 
 [dependencies]
-# Core async runtime
+# Core framework
+rspring-core = { path = "../rspring-core", version = "0.1.0" }
+
+# Web framework
+axum.workspace = true
+tower.workspace = true
+tower-http.workspace = true
+hyper.workspace = true
+
+# Async runtime
 tokio.workspace = true
-async-trait.workspace = true
-futures.workspace = true
 
 # Serialization
 serde.workspace = true
 serde_json.workspace = true
-
-# Configuration
-config.workspace = true
-toml.workspace = true
-serde_yaml.workspace = true
-
-# Error handling
-anyhow.workspace = true
-thiserror.workspace = true
-
-# Logging
-tracing.workspace = true
-tracing-subscriber.workspace = true
 
 # Proc macro dependencies
 proc-macro2.workspace = true
@@ -45,8 +39,6 @@ syn.workspace = true
 
 # Utilities
 chrono.workspace = true
-uuid.workspace = true
-once_cell.workspace = true
 
 [dev-dependencies]
 tokio-test.workspace = true

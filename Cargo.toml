@@ -1,21 +1,21 @@
 [workspace]
 members = [
-    "axum-boot-core",
-    "axum-boot-starter-web",
-    "axum-boot-starter-data-mysql",
-    "axum-boot-starter-data-redis",
+    "rspring-core",
+    "rspring-web",
+    "rspring-data-mysql",
+    "rspring-data-redis",
     "examples/*",
 ]
 resolver = "2"
 
 [workspace.package]
 version = "0.1.0"
-authors = ["AxumBoot Team <yan829513@gmail.com>"]
+authors = ["RSpring Team <yan829513@gmail.com>"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/axumboot/axum-boot"
-homepage = "https://axumboot.org"
-documentation = "https://docs.rs/axum-boot"
-keywords = ["axum", "spring-boot", "web", "framework", "rust"]
+repository = "https://github.com/rspring/rspring"
+homepage = "https://rspring.org"
+documentation = "https://docs.rs/rspring"
+keywords = ["spring", "rust", "web", "framework", "dependency-injection"]
 categories = ["web-programming::http-server", "web-programming"]
 edition = "2021"
 rust-version = "1.70"

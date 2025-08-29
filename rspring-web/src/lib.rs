@@ -3,7 +3,7 @@ pub mod macros;
 pub mod response;
 
 // Re-export core functionality
-pub use axum_boot_core::*;
+pub use rspring_core::*;
 
 // Re-export Web-specific types
 pub use controller::*;

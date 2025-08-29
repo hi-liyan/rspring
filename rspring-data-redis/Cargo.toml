@@ -1,5 +1,5 @@
 [package]
-name = "axum-boot-starter-data-mysql"
+name = "rspring-data-redis"
 version.workspace = true
 authors.workspace = true
 license.workspace = true
@@ -10,12 +10,12 @@ keywords.workspace = true
 categories.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-description = "MySQL data starter for the AxumBoot framework"
+description = "Redis data starter for the RSpring framework"
 
 [dependencies]
-axum-boot-core = { path = "../axum-boot-core", version = "0.1.0" }
-sqlx.workspace = true
-sea-orm.workspace = true
+rspring-core = { path = "../rspring-core", version = "0.1.0" }
+redis.workspace = true
+deadpool-redis.workspace = true
 tokio.workspace = true
 serde.workspace = true
 async-trait.workspace = true

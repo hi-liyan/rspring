@@ -4,14 +4,14 @@ use syn::{parse_macro_input, DeriveInput, ItemStruct};
 
 /// 应用程序入口注解
 /// 
-/// 标记一个结构体为 AxumBoot 应用程序入口点，会自动生成 run 方法
+/// 标记一个结构体为 RSpring 应用程序入口点，会自动生成 run 方法
 /// 
 /// # 示例
 /// 
 /// ```rust
-/// use axum_boot_core::*;
+/// use rspring_core::*;
 /// 
-/// #[axum_boot_application]
+/// #[rspring_application]
 /// pub struct Application;
 /// 
 /// #[tokio::main]
@@ -20,7 +20,7 @@ use syn::{parse_macro_input, DeriveInput, ItemStruct};
 /// }
 /// ```
 #[proc_macro_attribute]
-pub fn axum_boot_application(_args: TokenStream, input: TokenStream) -> TokenStream {
+pub fn rspring_application(_args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemStruct);
     let struct_name = &input.ident;
 
@@ -34,7 +34,7 @@ pub fn axum_boot_application(_args: TokenStream, input: TokenStream) -> TokenStr
                     .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
                     .init();
 
-                tracing::info!("启动 AxumBoot 应用程序");
+                tracing::info!("启动 RSpring 应用程序");
 
                 // 创建应用上下文
                 let context = crate::ApplicationContext::new().await?;
@@ -51,7 +51,7 @@ pub fn axum_boot_application(_args: TokenStream, input: TokenStream) -> TokenStr
             }
         }
 
-        impl crate::AxumBootApplication for #struct_name {
+        impl crate::RSpringApplication for #struct_name {
             async fn run() -> crate::Result<()> {
                 Self::run().await
             }

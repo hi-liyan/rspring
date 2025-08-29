@@ -23,7 +23,7 @@ pub fn rest_controller_derive(input: TokenStream) -> TokenStream {
     // TODO: 解析 RequestMapping 属性获取路由前缀
     
     let expanded = quote! {
-        impl axum_boot_core::Component for #name {
+        impl rspring_core::Component for #name {
             fn component_name(&self) -> &'static str {
                 stringify!(#name)
             }

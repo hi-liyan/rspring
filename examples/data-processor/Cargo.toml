@@ -8,8 +8,8 @@ name = "data-processor"
 path = "src/main.rs"
 
 [dependencies]
-# 只使用 axum-boot-core，不需要Web功能
-axum-boot-core = { path = "../../axum-boot-core" }
+# 只使用 rspring-core，不需要Web功能
+rspring-core = { path = "../../rspring-core" }
 
 # 异步运行时
 tokio = { version = "1.0", features = ["full"] }

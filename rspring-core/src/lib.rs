@@ -6,7 +6,7 @@ pub mod logging;
 pub mod macros;
 
 // Re-export common types and traits
-pub use application::{AxumBootApplication, ApplicationContext};
+pub use application::{RSpringApplication, ApplicationContext};
 pub use config::{Configuration, ConfigurationManager};
 pub use container::{Container, Component, Service, Repository, Controller};
 pub use error::{Error, Result};
