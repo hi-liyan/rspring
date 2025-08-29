@@ -1,6 +1,6 @@
-use axum_boot_core::*;
+use rspring_core::*;
 
-#[axum_boot_application]
+#[rspring_application]
 pub struct Application;
 
 #[tokio::main]
