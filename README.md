@@ -1,7 +1,7 @@
 # RSpring
 
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org)
-[![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](docs/README.md)
 [![Examples](https://img.shields.io/badge/examples-available-green.svg)](examples/)
 
@@ -150,7 +150,7 @@ pub struct UserRepositoryImpl {
 
 ## 📄 许可证
 
-本项目采用 MIT OR Apache-2.0 双重许可证。
+本项目采用 MIT 许可证。
 
 ## 🔗 相关链接
 

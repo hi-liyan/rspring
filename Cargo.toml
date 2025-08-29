@@ -11,7 +11,7 @@ resolver = "2"
 [workspace.package]
 version = "0.1.0"
 authors = ["RSpring Team <yan829513@gmail.com>"]
-license = "MIT OR Apache-2.0"
+license = "MIT"
 repository = "https://github.com/rspring/rspring"
 homepage = "https://rspring.org"
 documentation = "https://docs.rs/rspring"
