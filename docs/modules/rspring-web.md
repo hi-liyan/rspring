@@ -1,8 +1,8 @@
-# axum-boot-starter-web 模块文档
+# rspring-web 模块文档
 
 ## 📋 概述
 
-`axum-boot-starter-web` 是 AxumBoot 框架的 Web 开发启动器模块，提供了快速构建 REST API 的完整解决方案。它基于 Axum 框架，提供了 Spring Boot 风格的注解驱动开发体验。
+`rspring-web` 是 RSpring 框架的 Web 开发启动器模块，提供了快速构建 REST API 的完整解决方案。它基于 Axum 框架，提供了 Spring Boot 风格的注解驱动开发体验。
 
 ### 🎯 核心特性
 

@@ -1,16 +1,16 @@
-# AxumBoot 文档中心
+# RSpring 文档中心
 
-欢迎使用 AxumBoot - 一个类似 Spring Boot 的 Rust Web 框架！
+欢迎使用 RSpring - 一个类似 Spring Boot 的 Rust Web 框架！
 
 ## 📖 文档导航
 
 ### 🚀 快速开始
 - [**快速开始指南**](guide/quick-start.md) - 5分钟快速上手
 - [**安装指南**](guide/installation.md) - 详细安装步骤
-- [**第一个应用**](guide/first-application.md) - 创建你的第一个 AxumBoot 应用
+- [**第一个应用**](guide/first-application.md) - 创建你的第一个 RSpring 应用
 
 ### 📚 开发指南
-- [**核心概念**](guide/core-concepts.md) - 理解 AxumBoot 的核心理念
+- [**核心概念**](guide/core-concepts.md) - 理解 RSpring 的核心理念
 - [**配置系统**](guide/configuration.md) - 配置文件和环境变量
 - [**依赖注入**](guide/dependency-injection.md) - 组件管理和自动装配
 - [**Web 开发**](guide/web-development.md) - 控制器、路由和中间件
@@ -29,42 +29,42 @@
 
 深入了解每个模块的架构、API 和最佳实践：
 
-- [**axum-boot-core**](modules/axum-boot-core.md) - 核心框架模块
+- [**rspring-core**](modules/rspring-core.md) - 核心框架模块
   - 应用上下文和生命周期管理
   - 依赖注入容器实现
   - 配置管理系统
   - 统一错误处理
 
-- [**axum-boot-macro**](modules/axum-boot-macro.md) - 宏系统模块  
+- [**rspring-macro**](modules/rspring-macro.md) - 宏系统模块  
   - 注解驱动的组件声明
   - 代码生成和宏展开
   - 编译时依赖注入
   - 自定义派生宏
 
-- [**axum-boot-starter-web**](modules/axum-boot-starter-web.md) - Web 开发启动器
+- [**rspring-web**](modules/rspring-web.md) - Web 开发启动器
   - REST API 控制器
   - 路由和中间件管理
   - 请求/响应处理
   - 统一错误处理
 
-- [**axum-boot-starter-data-mysql**](modules/axum-boot-starter-data-mysql.md) - MySQL 数据访问启动器
+- [**rspring-data-mysql**](modules/rspring-data-mysql.md) - MySQL 数据访问启动器
   - 数据库连接池管理
   - Repository 模式实现
   - 声明式事务管理
   - 查询构建器
 
-- [**axum-boot-starter-data-redis**](modules/axum-boot-starter-data-redis.md) - Redis 缓存启动器
+- [**rspring-data-redis**](modules/rspring-data-redis.md) - Redis 缓存启动器
   - 缓存注解和模板
   - 多种数据结构操作
   - 分布式锁实现
   - 序列化和连接池
 
 ### 🔧 API 参考
-- [**axum-boot-core**](api/core.md) - 核心库 API
-- [**axum-boot-macro**](api/macro.md) - 宏和注解 API
-- [**axum-boot-starter-web**](api/starter-web.md) - Web 启动器 API
-- [**axum-boot-starter-data-mysql**](api/starter-data-mysql.md) - MySQL 启动器 API
-- [**axum-boot-starter-data-redis**](api/starter-data-redis.md) - Redis 启动器 API
+- [**rspring-core**](api/core.md) - 核心库 API
+- [**rspring-macro**](api/macro.md) - 宏和注解 API
+- [**rspring-web**](api/starter-web.md) - Web 启动器 API
+- [**rspring-data-mysql**](api/starter-data-mysql.md) - MySQL 启动器 API
+- [**rspring-data-redis**](api/starter-data-redis.md) - Redis 启动器 API
 
 ### 💡 示例项目
 - [**Hello World**](examples/hello-world.md) - 基础示例
@@ -110,7 +110,7 @@
 
 ## 🎯 设计理念
 
-AxumBoot 旨在让 Java 开发者能够平滑过渡到 Rust 生态，提供：
+RSpring 旨在让 Java 开发者能够平滑过渡到 Rust 生态，提供：
 
 1. **熟悉的开发体验** - 类似 Spring Boot 的注解和配置方式
 2. **Rust 的性能优势** - 享受 Rust 的零成本抽象和内存安全
@@ -121,14 +121,14 @@ AxumBoot 旨在让 Java 开发者能够平滑过渡到 Rust 生态，提供：
 
 - **当前版本**: 0.1.0
 - **Rust 版本要求**: 1.70+
-- **许可证**: MIT OR Apache-2.0
+- **许可证**: MIT
 
 ## 🚀 快速链接
 
-- [GitHub 仓库](https://github.com/axumboot/axum-boot)
-- [crates.io](https://crates.io/crates/axum-boot-core)
-- [在线文档](https://docs.rs/axum-boot-core)
-- [示例代码](https://github.com/axumboot/axum-boot/tree/main/examples)
+- [GitHub 仓库](https://github.com/hi-liyan/rspring)
+- [crates.io](https://crates.io/crates/rspring-core)
+- [在线文档](https://docs.rs/rspring-core)
+- [示例代码](https://github.com/hi-liyan/rspring/tree/main/examples)
 
 ---
 

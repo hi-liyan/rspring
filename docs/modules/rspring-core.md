@@ -1,36 +1,54 @@
-# axum-boot-core
+# rspring-core
 
-[![crates.io](https://img.shields.io/crates/v/axum-boot-core.svg)](https://crates.io/crates/axum-boot-core)
-[![docs.rs](https://img.shields.io/docsrs/axum-boot-core)](https://docs.rs/axum-boot-core)
+[![crates.io](https://img.shields.io/crates/v/rspring-core.svg)](https://crates.io/crates/rspring-core)
+[![docs.rs](https://img.shields.io/docsrs/rspring-core)](https://docs.rs/rspring-core)
 
-**axum-boot-core** 是 AxumBoot 框架的核心库，提供了应用启动、配置管理、依赖注入、错误处理等基础功能。
+**rspring-core** 是 RSpring 框架的核心库，提供了应用启动、配置管理、依赖注入、错误处理和日志系统等基础功能。它专注于非Web特定的核心功能，Web相关功能被分离到 rspring-web 模块中。
+
+## 🏠 模块边界
+
+### 在 rspring-core 中
+- ✅ 应用生命周期管理
+- ✅ 配置系统
+- ✅ 依赖泣入容器
+- ✅ 核心错误类型
+- ✅ 日志系统
+- ✅ 基础组件注解（Component, Service, Repository）
+
+### 在 rspring-web 中
+- ❌ ApiResponse 和 分页支持
+- ❌ REST 控制器注解
+- ❌ HTTP 相关错误处理
+- ❌ Axum 集成
 
 ## 🎯 核心功能
 
 - **应用生命周期管理** - 统一的应用启动和关闭流程
 - **配置系统** - 支持多格式、多环境的配置管理
 - **依赖注入容器** - 类型安全的组件管理和自动装配
-- **错误处理** - 统一的错误类型和处理机制
+- **错误处理** - 统一的错误类型和处理机制（非Web特定）
 - **日志集成** - 基于 tracing 的结构化日志
-- **通用工具** - API 响应格式、分页等实用工具
+- **核心组件注解** - 基础的组件标记宏（Service, Repository, Component）
+
+> **注意**: Web 相关功能如 ApiResponse、分页支持、REST 控制器等已移至 `rspring-web` 模块。
 
 ## 📦 安装
 
 ```toml
 [dependencies]
-axum-boot-core = "0.1.0"
+rspring-core = "0.1.0"
 tokio = { version = "1.0", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
 ```
 
 ## 🚀 快速开始
 
-### 创建应用
+### 创建纯核心应用
 
 ```rust
-use axum_boot_core::*;
+use rspring_core::*;
 
-#[axum_boot_application]
+#[rspring_application]
 pub struct Application;
 
 #[tokio::main]
@@ -53,7 +71,7 @@ max_connections = 10
 ```
 
 ```rust
-use axum_boot_core::*;
+use rspring_core::*;
 
 #[derive(Debug, Clone, Deserialize, Configuration)]
 pub struct ServerConfig {
@@ -77,7 +95,7 @@ impl MyService {
 }
 ```
 
-### 依赖注入
+### 依赖注入（纯核心组件）
 
 ```rust
 // 定义服务
@@ -89,19 +107,18 @@ pub struct UserService {
 // 定义仓储
 #[derive(Repository)]
 pub struct UserRepository {
-    db_pool: Arc<DbPool>,
+    // 注意：数据库连接等具体实现在对应的 data 模块中
 }
 
-// 定义控制器
-#[derive(RestController)]
-pub struct UserController {
-    user_service: Arc<UserService>,
+// 定义通用组件
+#[derive(Component)]
+pub struct EmailService {
+    smtp_config: SmtpConfig,
 }
 
-impl UserController {
-    pub async fn get_users(&self) -> Result<ApiResponse<Vec<User>>> {
-        let users = self.user_service.get_all_users().await?;
-        Ok(ApiResponse::success(users))
+impl UserService {
+    pub async fn get_all_users(&self) -> Result<Vec<User>> {
+        self.repository.find_all().await
     }
 }
 ```
@@ -111,7 +128,7 @@ impl UserController {
 ### 核心组件
 
 ```
-axum-boot-core/
+rspring-core/
 ├── application/          # 应用启动和生命周期
 │   ├── context.rs       # 应用上下文
 │   └── lifecycle.rs     # 生命周期管理
@@ -123,18 +140,19 @@ axum-boot-core/
 │   ├── registry.rs      # 组件注册
 │   ├── injection.rs     # 依赖注入
 │   └── lifecycle.rs     # 组件生命周期
-├── error/               # 错误处理
+├── error/               # 错误处理（核心错误类型）
 │   ├── types.rs        # 错误类型定义
 │   └── handler.rs      # 错误处理器
-└── logging/            # 日志系统
-    └── config.rs       # 日志配置
+├── logging/            # 日志系统
+│   └── config.rs       # 日志配置
+└── macros.rs           # 核心宏（Service, Repository, Component）
 ```
 
 ### 类图关系
 
 ```mermaid
 classDiagram
-    class AxumBootApplication {
+    class RSpringApplication {
         +context: ApplicationContext
         +new() Result~Self~
         +run() Future~Result~
@@ -160,19 +178,19 @@ classDiagram
         +bind~T~() Result~T~
     }
     
-    AxumBootApplication --> ApplicationContext
+    RSpringApplication --> ApplicationContext
     ApplicationContext --> Container
     ApplicationContext --> ConfigurationManager
 ```
 
 ## 🔧 核心 API
 
-### AxumBootApplication
+### RSpringApplication
 
 应用程序主类，负责整个应用的生命周期管理。
 
 ```rust
-impl AxumBootApplication {
+impl RSpringApplication {
     /// 创建新的应用实例
     /// 
     /// # 错误
@@ -333,11 +351,11 @@ pub trait Repository: Component {}
 
 /// 控制器组件标记接口
 /// 
-/// 用于标记 Web 控制器组件
+/// 用于标记控制器组件（Web 相关功能在 rspring-web 中）
 pub trait Controller: Component {}
 ```
 
-### 注解宏
+### 注解宏（核心宏）
 
 ```rust
 /// 标记结构体为组件
@@ -371,11 +389,19 @@ pub trait Controller: Component {}
 /// 自动实现 Component 和 Repository trait
 #[derive(Repository)]
 
-/// 标记结构体为控制器组件
+/// 标记结构体为应用程序入口
 /// 
-/// 自动实现 Component 和 Controller trait
-#[derive(RestController)]
+/// 自动生成 run() 方法
+/// 
+/// # 示例
+/// ```rust
+/// #[rspring_application]
+/// pub struct Application;
+/// ```
+#[rspring_application]
 ```
+
+> **注意**: Web 相关的 RestController 注解在 `rspring-web` 模块中。
 
 ## ❌ 错误处理
 
@@ -451,94 +477,6 @@ impl Error {
 }
 ```
 
-## 📊 通用类型
-
-### ApiResponse
-
-统一的 API 响应格式。
-
-```rust
-/// API 响应结构
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ApiResponse<T> {
-    /// 响应状态码
-    pub code: i32,
-    /// 响应消息
-    pub message: String,
-    /// 响应数据
-    pub data: Option<T>,
-    /// 时间戳
-    pub timestamp: i64,
-}
-
-impl<T> ApiResponse<T> {
-    /// 创建成功响应
-    pub fn success(data: T) -> Self;
-    
-    /// 创建错误响应
-    pub fn error(code: i32, message: impl Into<String>) -> ApiResponse<()>;
-}
-```
-
-**使用示例：**
-
-```rust
-// 成功响应
-let users = vec![user1, user2];
-let response = ApiResponse::success(users);
-
-// 错误响应
-let response = ApiResponse::error(404, "用户不存在");
-
-// JSON 输出
-{
-  "code": 200,
-  "message": "success",
-  "data": [...],
-  "timestamp": 1709875200
-}
-```
-
-### 分页支持
-
-```rust
-/// 分页参数
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Page {
-    /// 页码（从 0 开始）
-    pub page: u64,
-    /// 页大小
-    pub size: u64,
-}
-
-/// 分页结果
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PageResult<T> {
-    /// 当前页数据
-    pub content: Vec<T>,
-    /// 当前页码
-    pub page: u64,
-    /// 页大小
-    pub size: u64,
-    /// 总记录数
-    pub total: u64,
-    /// 总页数
-    pub total_pages: u64,
-}
-```
-
-**使用示例：**
-
-```rust
-// 分页查询
-pub async fn get_users(&self, page: Page) -> Result<PageResult<User>> {
-    let users = self.repository.find_page(page.page, page.size).await?;
-    let total = self.repository.count().await?;
-    
-    Ok(PageResult::new(users, page.page, page.size, total))
-}
-```
-
 ## ⚙️ 配置系统详解
 
 ### 支持的配置格式
@@ -551,7 +489,7 @@ pub async fn get_users(&self, page: Page) -> Result<PageResult<User>> {
 
 1. `application.{toml|yaml|json}` - 基础配置
 2. `application-{profile}.{toml|yaml|json}` - 环境配置
-3. 环境变量 (AXUM_BOOT_*)
+3. 环境变量 (RSPRING_*)
 
 ### 内置配置结构
 
@@ -601,10 +539,10 @@ pub struct LoggingConfig {
 
 ```rust
 // 启用容器调试日志
-export RUST_LOG="axum_boot_core::container=debug"
+export RUST_LOG="rspring_core::container=debug"
 
 // 启用所有调试日志
-export RUST_LOG="axum_boot_core=debug"
+export RUST_LOG="rspring_core=debug"
 ```
 
 ### 配置验证
@@ -629,10 +567,10 @@ pub struct AppConfig {
 
 | 配置路径 | 环境变量 | 示例值 |
 |----------|----------|--------|
-| `server.port` | `AXUM_BOOT_SERVER_PORT` | `8080` |
-| `server.host` | `AXUM_BOOT_SERVER_HOST` | `0.0.0.0` |
-| `database.url` | `AXUM_BOOT_DATABASE_URL` | `mysql://localhost:3306/db` |
-| `database.max_connections` | `AXUM_BOOT_DATABASE_MAX_CONNECTIONS` | `10` |
+| `server.port` | `RSPRING_SERVER_PORT` | `8080` |
+| `server.host` | `RSPRING_SERVER_HOST` | `0.0.0.0` |
+| `database.url` | `RSPRING_DATABASE_URL` | `mysql://localhost:3306/db` |
+| `database.max_connections` | `RSPRING_DATABASE_MAX_CONNECTIONS` | `10` |
 
 ## 🧪 测试支持
 
@@ -642,7 +580,7 @@ pub struct AppConfig {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum_boot_core::test_utils::*;
+    use rspring_core::test_utils::*;
     
     #[tokio::test]
     async fn test_application_startup() {
@@ -729,25 +667,9 @@ impl UserService {
             .ok_or_else(|| Error::not_found("用户"))
     }
 }
+```
 
-// ✅ 控制器错误转换
-impl UserController {
-    pub async fn get_user(&self, id: u64) -> Result<ApiResponse<User>> {
-        match self.user_service.get_user(id).await {
-            Ok(user) => Ok(ApiResponse::success(user)),
-            Err(Error::Validation { message }) => {
-                Ok(ApiResponse::error(400, message))
-            },
-            Err(Error::NotFound { resource }) => {
-                Ok(ApiResponse::error(404, format!("{} 不存在", resource)))
-            },
-            Err(e) => {
-                tracing::error!("获取用户失败: {}", e);
-                Ok(ApiResponse::error(500, "内部服务器错误"))
-            }
-        }
-    }
-}
+> **注意**: Web 相关的控制器错误处理示例在 `rspring-web` 模块文档中。
 ```
 
 ## 🔗 相关链接
@@ -756,5 +678,6 @@ impl UserController {
 - [配置系统指南](../../guide/configuration.md)
 - [依赖注入指南](../../guide/dependency-injection.md)
 - [错误处理指南](../../guide/error-handling.md)
-- [GitHub 仓库](https://github.com/axumboot/axum-boot)
+- [**rspring-web 模块**](./rspring-web.md) - Web 相关功能（ApiResponse, 控制器等）
+- [GitHub 仓库](https://github.com/hi-liyan/rspring)
 - [示例代码](../../examples/)

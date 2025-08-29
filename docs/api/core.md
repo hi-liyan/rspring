@@ -1,13 +1,13 @@
-# axum-boot-core API 参考
+# rspring-core API 参考
 
-`axum-boot-core` 是 AxumBoot 框架的核心库，提供了应用启动、配置管理、依赖注入、错误处理等基础功能。
+`rspring-core` 是 RSpring 框架的核心库，提供了应用启动、配置管理、依赖注入、错误处理等基础功能。
 
 ## 📦 模块概览
 
 ```rust
-use axum_boot_core::{
+use rspring_core::{
     // 应用启动
-    AxumBootApplication, ApplicationContext,
+    RSpringApplication, ApplicationContext,
     
     // 配置管理
     Configuration, ConfigurationManager,
@@ -22,22 +22,22 @@ use axum_boot_core::{
     ApiResponse, Page, PageResult,
     
     // 宏
-    axum_boot_application, Component, Service, Repository, RestController,
+    rspring_application, Component, Service, Repository, RestController,
 };
 ```
 
 ## 🚀 应用启动
 
-### AxumBootApplication
+### RSpringApplication
 
 主应用类，负责应用的启动和生命周期管理。
 
 ```rust
-pub struct AxumBootApplication {
+pub struct RSpringApplication {
     context: ApplicationContext,
 }
 
-impl AxumBootApplication {
+impl RSpringApplication {
     /// 创建新的应用实例
     pub fn new() -> Result<Self>;
     
@@ -63,9 +63,9 @@ impl AxumBootApplication {
 **使用示例：**
 
 ```rust
-use axum_boot_core::*;
+use rspring_core::*;
 
-#[axum_boot_application]
+#[rspring_application]
 pub struct MyApplication;
 
 #[tokio::main]
@@ -119,7 +119,7 @@ impl ConfigurationManager {
     /// 自动加载以下配置源（按优先级顺序）：
     /// 1. application.toml/yaml/json
     /// 2. application-{profile}.toml/yaml/json
-    /// 3. 环境变量 (AXUM_BOOT_*)
+    /// 3. 环境变量 (RSPRING_*)
     pub fn new() -> Result<Self>;
     
     /// 获取配置值
@@ -458,18 +458,18 @@ impl<T> PageResult<T> {
 
 ## 🏷️ 宏
 
-### #[axum_boot_application]
+### #[rspring_application]
 
 标记应用入口的属性宏。
 
 ```rust
-/// 标记结构体为 AxumBoot 应用
+/// 标记结构体为 RSpring 应用
 /// 
 /// 自动生成 `run()` 方法，用于启动应用
 /// 
 /// # 示例
 /// ```rust
-/// #[axum_boot_application]
+/// #[rspring_application]
 /// pub struct Application;
 /// 
 /// #[tokio::main]
@@ -478,7 +478,7 @@ impl<T> PageResult<T> {
 /// }
 /// ```
 #[proc_macro_attribute]
-pub fn axum_boot_application(_args: TokenStream, input: TokenStream) -> TokenStream;
+pub fn rspring_application(_args: TokenStream, input: TokenStream) -> TokenStream;
 ```
 
 ### #[derive(Component)]
@@ -564,7 +564,7 @@ pub fn rest_controller_derive(input: TokenStream) -> TokenStream;
 ### 完整的应用示例
 
 ```rust
-use axum_boot_core::*;
+use rspring_core::*;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
@@ -637,7 +637,7 @@ impl UserController {
 }
 
 // 应用入口
-#[axum_boot_application]
+#[rspring_application]
 pub struct Application;
 
 #[tokio::main]
@@ -649,7 +649,7 @@ async fn main() -> Result<()> {
 ### 配置使用示例
 
 ```rust
-use axum_boot_core::*;
+use rspring_core::*;
 
 // 自定义配置结构
 #[derive(Debug, Clone, Deserialize, Configuration)]

@@ -1,13 +1,13 @@
-# axum-boot-macro
+# rspring-macro
 
-[![crates.io](https://img.shields.io/crates/v/axum-boot-macro.svg)](https://crates.io/crates/axum-boot-macro)
-[![docs.rs](https://img.shields.io/docsrs/axum-boot-macro)](https://docs.rs/axum-boot-macro)
+[![crates.io](https://img.shields.io/crates/v/rspring-macro.svg)](https://crates.io/crates/rspring-macro)
+[![docs.rs](https://img.shields.io/docsrs/rspring-macro)](https://docs.rs/rspring-macro)
 
-**axum-boot-macro** 是 AxumBoot 框架的宏系统，提供了类似 Spring Boot 的注解式编程体验。通过过程宏（proc-macro）实现编译时代码生成，为 Rust 带来声明式的组件开发模式。
+**rspring-macro** 是 RSpring 框架的宏系统，提供了类似 Spring Boot 的注解式编程体验。通过过程宏（proc-macro）实现编译时代码生成，为 Rust 带来声明式的组件开发模式。
 
 ## 🎯 核心功能
 
-- **应用启动注解** - `#[axum_boot_application]` 应用入口标记
+- **应用启动注解** - `#[rspring_application]` 应用入口标记
 - **组件注解** - `#[Component]`, `#[Service]`, `#[Repository]` 组件标记
 - **Web 注解** - `#[RestController]`, HTTP 方法注解（开发中）
 - **依赖注入注解** - `#[Autowired]`, `#[Bean]`（开发中）
@@ -18,9 +18,9 @@
 
 ```toml
 [dependencies]
-axum-boot-macro = "0.1.0"
-# 通常与 axum-boot-core 一起使用
-axum-boot-core = "0.1.0"
+rspring-macro = "0.1.0"
+# 通常与 rspring-core 一起使用
+rspring-core = "0.1.0"
 ```
 
 ## 🚀 快速开始
@@ -28,10 +28,10 @@ axum-boot-core = "0.1.0"
 ### 应用启动注解
 
 ```rust
-use axum_boot_core::*;
+use rspring_core::*;
 
 /// 标记应用程序入口
-#[axum_boot_application]
+#[rspring_application]
 pub struct MyApplication;
 
 #[tokio::main]
@@ -44,7 +44,7 @@ async fn main() -> Result<()> {
 ### 组件注解
 
 ```rust
-use axum_boot_core::*;
+use rspring_core::*;
 
 /// 通用组件
 #[derive(Component)]
@@ -75,9 +75,9 @@ pub struct UserController {
 
 ### 1. 应用启动注解
 
-#### `#[axum_boot_application]`
+#### `#[rspring_application]`
 
-标记结构体为 AxumBoot 应用入口点。
+标记结构体为 RSpring 应用入口点。
 
 **功能：**
 - 生成 `run()` 静态方法
@@ -87,15 +87,15 @@ pub struct UserController {
 **生成的代码：**
 ```rust
 // 原始代码
-#[axum_boot_application]
+#[rspring_application]
 pub struct Application;
 
 // 宏展开后
 pub struct Application;
 
 impl Application {
-    pub async fn run() -> axum_boot_core::Result<()> {
-        let app = axum_boot_core::AxumBootApplication::new()?;
+    pub async fn run() -> rspring_core::Result<()> {
+        let app = rspring_core::RSpringApplication::new()?;
         app.run().await
     }
 }
@@ -103,7 +103,7 @@ impl Application {
 
 **使用示例：**
 ```rust
-#[axum_boot_application]
+#[rspring_application]
 pub struct MyApp;
 
 #[tokio::main]
@@ -137,7 +137,7 @@ pub struct MyComponent {
     name: String,
 }
 
-impl axum_boot_core::Component for MyComponent {
+impl rspring_core::Component for MyComponent {
     fn component_name(&self) -> &'static str {
         "MyComponent"
     }
@@ -162,13 +162,13 @@ pub struct UserService {
 }
 
 // 宏展开后
-impl axum_boot_core::Component for UserService {
+impl rspring_core::Component for UserService {
     fn component_name(&self) -> &'static str {
         "UserService"
     }
 }
 
-impl axum_boot_core::Service for UserService {}
+impl rspring_core::Service for UserService {}
 ```
 
 #### `#[derive(Repository)]`
@@ -447,7 +447,7 @@ pub fn service_derive(input: TokenStream) -> TokenStream {
     
     // 生成 Component trait 实现
     let component_impl = quote! {
-        impl axum_boot_core::Component for #name {
+        impl rspring_core::Component for #name {
             fn component_name(&self) -> &'static str {
                 stringify!(#name)
             }
@@ -456,7 +456,7 @@ pub fn service_derive(input: TokenStream) -> TokenStream {
     
     // 生成 Service trait 实现
     let service_impl = quote! {
-        impl axum_boot_core::Service for #name {}
+        impl rspring_core::Service for #name {}
     };
     
     // 组合生成的代码
@@ -500,13 +500,13 @@ pub struct UserService {
     repository: Arc<UserRepository>,
 }
 
-impl axum_boot_core::Component for UserService {
+impl rspring_core::Component for UserService {
     fn component_name(&self) -> &'static str {
         "UserService"
     }
 }
 
-impl axum_boot_core::Service for UserService {}
+impl rspring_core::Service for UserService {}
 ```
 
 ## ⚠️ 注意事项
@@ -516,7 +516,7 @@ impl axum_boot_core::Service for UserService {}
 1. **导入要求**
 ```rust
 // 必须导入相关 trait
-use axum_boot_core::{Component, Service, Repository};
+use rspring_core::{Component, Service, Repository};
 
 #[derive(Service)]
 pub struct MyService;
@@ -562,7 +562,7 @@ pub struct MyService;
 // error: cannot find trait `Component` in this scope
 
 // ✅ 正确：导入所需 trait
-use axum_boot_core::{Component, Service};
+use rspring_core::{Component, Service};
 
 #[derive(Service)]
 pub struct MyService;
@@ -579,7 +579,7 @@ cargo expand | grep -A 20 "impl.*Component.*for.*MyService"
 ```rust
 // 在 Cargo.toml 中
 [dependencies]
-axum-boot-macro = { version = "0.1.0", features = ["debug"] }
+rspring-macro = { version = "0.1.0", features = ["debug"] }
 ```
 
 3. **编译时日志**
@@ -679,8 +679,8 @@ impl UserService {
 
 ## 🔗 相关链接
 
-- [axum-boot-core 文档](./axum-boot-core.md)
+- [rspring-core 文档](./rspring-core.md)
 - [快速开始指南](../guide/quick-start.md)
 - [核心概念](../guide/core-concepts.md)
-- [GitHub 仓库](https://github.com/axumboot/axum-boot)
+- [GitHub 仓库](https://github.com/hi-liyan/rspring)
 - [示例代码](../examples/)

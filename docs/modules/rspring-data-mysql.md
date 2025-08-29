@@ -1,8 +1,8 @@
-# axum-boot-starter-data-mysql 模块文档
+# rspring-data-mysql 模块文档
 
 ## 📋 概述
 
-`axum-boot-starter-data-mysql` 是 AxumBoot 框架的 MySQL 数据访问启动器模块，提供了基于 SQLx 的数据库操作解决方案。它借鉴了 Spring Data JPA 的设计理念，提供了注解驱动的数据访问层和声明式事务管理。
+`rspring-data-mysql` 是 RSpring 框架的 MySQL 数据访问启动器模块，提供了基于 SQLx 的数据库操作解决方案。它借鉴了 Spring Data JPA 的设计理念，提供了注解驱动的数据访问层和声明式事务管理。
 
 ### 🎯 核心特性
 
