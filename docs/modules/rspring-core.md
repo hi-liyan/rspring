@@ -3,34 +3,16 @@
 [![crates.io](https://img.shields.io/crates/v/rspring-core.svg)](https://crates.io/crates/rspring-core)
 [![docs.rs](https://img.shields.io/docsrs/rspring-core)](https://docs.rs/rspring-core)
 
-**rspring-core** 是 RSpring 框架的核心库，提供了应用启动、配置管理、依赖注入、错误处理和日志系统等基础功能。它专注于非Web特定的核心功能，Web相关功能被分离到 rspring-web 模块中。
-
-## 🏠 模块边界
-
-### 在 rspring-core 中
-- ✅ 应用生命周期管理
-- ✅ 配置系统
-- ✅ 依赖泣入容器
-- ✅ 核心错误类型
-- ✅ 日志系统
-- ✅ 基础组件注解（Component, Service, Repository）
-
-### 在 rspring-web 中
-- ❌ ApiResponse 和 分页支持
-- ❌ REST 控制器注解
-- ❌ HTTP 相关错误处理
-- ❌ Axum 集成
+**rspring-core** 是 RSpring 框架的核心库，提供了应用启动、配置管理、依赖注入、错误处理和日志系统等基础功能。
 
 ## 🎯 核心功能
 
 - **应用生命周期管理** - 统一的应用启动和关闭流程
-- **配置系统** - 支持多格式、多环境的配置管理
+- **通用配置系统** - 支持 TOML/YAML/JSON 的通用配置读取工具
 - **依赖注入容器** - 类型安全的组件管理和自动装配
-- **错误处理** - 统一的错误类型和处理机制（非Web特定）
+- **核心错误处理** - 统一的错误类型和处理机制
 - **日志集成** - 基于 tracing 的结构化日志
-- **核心组件注解** - 基础的组件标记宏（Service, Repository, Component）
-
-> **注意**: Web 相关功能如 ApiResponse、分页支持、REST 控制器等已移至 `rspring-web` 模块。
+- **核心组件注解** - 基础的组件标记宏（Component, Service, Repository）
 
 ## 📦 安装
 
@@ -61,36 +43,75 @@ async fn main() -> Result<()> {
 
 ```rust
 // application.toml
+[app]
+name = "My Application"
+version = "1.0.0"
+debug = true
+
 [server]
 host = "0.0.0.0"
 port = 8080
 
+[custom]
+max_workers = 10
+timeout = 30
+features = ["auth", "logging"]
+
 [database]
-url = "mysql://localhost:3306/mydb"
-max_connections = 10
+type = "mysql"
+connections = { min = 5, max = 20 }
 ```
 
 ```rust
 use rspring_core::*;
 
-#[derive(Debug, Clone, Deserialize, Configuration)]
+// 定义自定义配置结构
+#[derive(Debug, Clone, Deserialize)]
+pub struct AppConfig {
+    pub name: String,
+    pub version: String,
+    pub debug: bool,
+}
+
+#[derive(Debug, Clone, Deserialize)]
 pub struct ServerConfig {
     pub host: String,
     pub port: u16,
 }
 
-#[derive(Service)]
-pub struct MyService {
-    config: ServerConfig,
+#[derive(Debug, Clone, Deserialize)]
+pub struct CustomConfig {
+    pub max_workers: u32,
+    pub timeout: u64,
+    pub features: Vec<String>,
 }
 
-impl MyService {
-    pub fn new(config: ServerConfig) -> Self {
-        Self { config }
+#[derive(Service)]
+pub struct ConfigService {
+    config_manager: Arc<ConfigurationManager>,
+}
+
+impl ConfigService {
+    pub fn new(config_manager: Arc<ConfigurationManager>) -> Self {
+        Self { config_manager }
     }
     
-    pub fn get_server_addr(&self) -> String {
-        format!("{}:{}", self.config.host, self.config.port)
+    // 读取完整配置结构
+    pub fn get_app_config(&self) -> Result<AppConfig> {
+        self.config_manager.get_section("app")
+    }
+    
+    pub fn get_server_config(&self) -> Result<ServerConfig> {
+        self.config_manager.get_section("server")
+    }
+    
+    // 读取单个配置值
+    pub fn get_port(&self) -> Result<u16> {
+        self.config_manager.get("server.port")
+    }
+    
+    pub fn get_features(&self) -> Result<Vec<String>> {
+        self.config_manager.get("custom.features")
     }
 }
 ```
@@ -98,27 +119,55 @@ impl MyService {
 ### 依赖注入（纯核心组件）
 
 ```rust
-// 定义服务
+// 定义业务服务
 #[derive(Service)]
 pub struct UserService {
     repository: Arc<UserRepository>,
+    config: Arc<ConfigurationManager>,
 }
 
-// 定义仓储
+impl UserService {
+    pub fn new(repository: Arc<UserRepository>, config: Arc<ConfigurationManager>) -> Self {
+        Self { repository, config }
+    }
+    
+    pub async fn get_all_users(&self) -> Result<Vec<User>> {
+        // 使用配置
+        let page_size: u32 = self.config.get("pagination.default_size")?;
+        self.repository.find_all_with_limit(page_size).await
+    }
+}
+
+// 定义数据访问层
 #[derive(Repository)]
-pub struct UserRepository {
-    // 注意：数据库连接等具体实现在对应的 data 模块中
+pub struct UserRepository;
+
+impl UserRepository {
+    pub async fn find_all_with_limit(&self, limit: u32) -> Result<Vec<User>> {
+        // 实际的数据访问逻辑在对应的 data 模块中实现
+        todo!("由具体的 data 模块实现")
+    }
 }
 
 // 定义通用组件
 #[derive(Component)]
 pub struct EmailService {
-    smtp_config: SmtpConfig,
+    config: Arc<ConfigurationManager>,
 }
 
-impl UserService {
-    pub async fn get_all_users(&self) -> Result<Vec<User>> {
-        self.repository.find_all().await
+impl EmailService {
+    pub fn new(config: Arc<ConfigurationManager>) -> Self {
+        Self { config }
+    }
+    
+    pub async fn send_email(&self, to: &str, subject: &str) -> Result<()> {
+        // 读取邮件配置
+        let smtp_host: String = self.config.get("email.smtp.host")?;
+        let smtp_port: u16 = self.config.get("email.smtp.port")?;
+        
+        // 发送邮件逻辑...
+        println!("发送邮件到 {} 通过 {}:{}", to, smtp_host, smtp_port);
+        Ok(())
     }
 }
 ```
@@ -242,7 +291,7 @@ impl ApplicationContext {
 
 ### ConfigurationManager
 
-配置管理器，支持多种配置源和格式。
+通用配置读取工具，支持 TOML、YAML、JSON 格式的复杂配置结构。
 
 ```rust
 impl ConfigurationManager {
@@ -251,31 +300,63 @@ impl ConfigurationManager {
     /// 自动加载配置文件和环境变量
     pub fn new() -> Result<Self>;
     
-    /// 获取配置值
+    /// 获取单个配置值
+    /// 
+    /// 支持所有 serde 反序列化类型，包括：
+    /// - 基础类型：String, i32, u64, bool 等
+    /// - 集合类型：Vec<T>, HashMap<K, V>
+    /// - 可选类型：Option<T>
+    /// - 自定义结构体
     /// 
     /// # 示例
     /// ```rust
+    /// // 基础类型
     /// let port: u16 = config.get("server.port")?;
-    /// let host: String = config.get("server.host")?;
+    /// let debug: bool = config.get("app.debug")?;
+    /// 
+    /// // 集合类型
+    /// let features: Vec<String> = config.get("custom.features")?;
+    /// 
+    /// // 复杂结构
+    /// let db_config: HashMap<String, i32> = config.get("database.connections")?;
     /// ```
     pub fn get<T: DeserializeOwned>(&self, key: &str) -> Result<T>;
     
-    /// 绑定配置到结构体
+    /// 获取配置章节
+    /// 
+    /// 将整个配置章节绑定到结构体
     /// 
     /// # 示例
     /// ```rust
-    /// let server_config: ServerConfig = config.bind()?;
+    /// #[derive(Deserialize)]
+    /// pub struct ServerConfig {
+    ///     pub host: String,
+    ///     pub port: u16,
+    /// }
+    /// 
+    /// let server: ServerConfig = config.get_section("server")?;
     /// ```
-    pub fn bind<T: Configuration>(&self) -> Result<T>;
+    pub fn get_section<T: DeserializeOwned>(&self, section: &str) -> Result<T>;
     
-    /// 获取字符串配置（便捷方法）
-    pub fn get_string(&self, key: &str) -> Result<String>;
+    /// 获取整个配置文件
+    /// 
+    /// 将整个配置文件绑定到结构体
+    pub fn get_all<T: DeserializeOwned>(&self) -> Result<T>;
     
-    /// 获取整数配置（便捷方法）  
-    pub fn get_int(&self, key: &str) -> Result<i64>;
+    /// 检查配置项是否存在
+    pub fn contains_key(&self, key: &str) -> bool;
     
-    /// 获取布尔配置（便捷方法）
-    pub fn get_bool(&self, key: &str) -> Result<bool>;
+    /// 获取所有配置键
+    pub fn keys(&self) -> Vec<String>;
+    
+    /// 获取指定前缀的所有配置键
+    /// 
+    /// # 示例
+    /// ```rust
+    /// // 获取所有 "database." 开头的配置
+    /// let db_keys = config.keys_with_prefix("database");
+    /// ```
+    pub fn keys_with_prefix(&self, prefix: &str) -> Vec<String>;
 }
 ```
 
@@ -351,7 +432,7 @@ pub trait Repository: Component {}
 
 /// 控制器组件标记接口
 /// 
-/// 用于标记控制器组件（Web 相关功能在 rspring-web 中）
+/// 基础的控制器标记，具体 Web 功能由其他模块提供
 pub trait Controller: Component {}
 ```
 
@@ -391,17 +472,20 @@ pub trait Controller: Component {}
 
 /// 标记结构体为应用程序入口
 /// 
-/// 自动生成 run() 方法
+/// 自动生成 run() 方法用于启动应用
 /// 
 /// # 示例
 /// ```rust
 /// #[rspring_application]
 /// pub struct Application;
+/// 
+/// #[tokio::main]
+/// async fn main() -> Result<()> {
+///     Application::run().await
+/// }
 /// ```
 #[rspring_application]
 ```
-
-> **注意**: Web 相关的 RestController 注解在 `rspring-web` 模块中。
 
 ## ❌ 错误处理
 
@@ -481,9 +565,9 @@ impl Error {
 
 ### 支持的配置格式
 
-- **TOML** (推荐)
-- **YAML**
-- **JSON**
+- **TOML** (推荐) - 简洁易读，支持复杂结构
+- **YAML** - 灵活的层次结构
+- **JSON** - 通用数据交换格式
 
 ### 配置文件加载顺序
 
@@ -491,46 +575,176 @@ impl Error {
 2. `application-{profile}.{toml|yaml|json}` - 环境配置
 3. 环境变量 (RSPRING_*)
 
-### 内置配置结构
+### 支持的数据类型
+
+#### 基础类型
+```toml
+# application.toml
+app_name = "My App"          # String
+port = 8080                  # 整数
+debug = true                 # 布尔
+version = 1.5                # 浮点数
+```
 
 ```rust
-/// 服务器配置
-#[derive(Debug, Clone, Deserialize, Configuration)]
-pub struct ServerConfig {
-    #[serde(default = "default_host")]
-    pub host: String,
-    
-    #[serde(default = "default_port")]
-    pub port: u16,
-    
-    #[serde(default = "default_max_connections")]
-    pub max_connections: u32,
-}
+let name: String = config.get("app_name")?;
+let port: u16 = config.get("port")?;
+let debug: bool = config.get("debug")?;
+let version: f32 = config.get("version")?;
+```
 
-/// 数据库配置
-#[derive(Debug, Clone, Deserialize, Configuration)]
+#### 数组和列表
+```toml
+features = ["auth", "logging", "cache"]
+ports = [8080, 8081, 8082]
+```
+
+```rust
+let features: Vec<String> = config.get("features")?;
+let ports: Vec<u16> = config.get("ports")?;
+```
+
+#### 对象和映射
+```toml
+[database]
+host = "localhost"
+port = 3306
+name = "mydb"
+
+[limits]
+max_connections = 100
+timeout = 30
+
+[features]
+auth = { enabled = true, provider = "jwt" }
+logging = { level = "info", format = "json" }
+```
+
+```rust
+// 定义结构体
+#[derive(Debug, Deserialize)]
 pub struct DatabaseConfig {
-    pub url: String,
-    pub max_connections: u32,
-    pub min_connections: u32,
-    pub connection_timeout: u64,
+    pub host: String,
+    pub port: u16,
+    pub name: String,
 }
 
-/// Redis 配置
-#[derive(Debug, Clone, Deserialize, Configuration)]
-pub struct RedisConfig {
-    pub url: String,
-    pub pool_size: u32,
-    pub connection_timeout: u64,
+#[derive(Debug, Deserialize)]
+pub struct AuthConfig {
+    pub enabled: bool,
+    pub provider: String,
 }
 
-/// 日志配置
-#[derive(Debug, Clone, Deserialize, Configuration)]
-pub struct LoggingConfig {
-    pub level: String,
-    pub format: Option<String>,
-    pub output: Option<String>,
+// 读取配置
+let db_config: DatabaseConfig = config.get_section("database")?;
+let limits: HashMap<String, u32> = config.get_section("limits")?;
+let auth_config: AuthConfig = config.get("features.auth")?;
+```
+
+#### 可选值和默认值
+```toml
+[optional]
+# timeout 可能不存在
+# timeout = 30
+```
+
+```rust
+#[derive(Debug, Deserialize)]
+pub struct OptionalConfig {
+    #[serde(default = "default_timeout")]
+    pub timeout: u32,
+    pub max_retry: Option<u32>,  // 可为 None
 }
+
+fn default_timeout() -> u32 { 30 }
+
+let opt_config: OptionalConfig = config.get_section("optional")?;
+```
+
+### 复杂配置示例
+
+```toml
+# application.toml
+[app]
+name = "E-commerce API"
+version = "2.1.0"
+debug = false
+
+[server]
+host = "0.0.0.0"
+port = 8080
+workers = 4
+
+[database]
+type = "mysql"
+host = "db.example.com"
+port = 3306
+name = "shop"
+pool = { min = 5, max = 20, timeout = 30 }
+
+[cache]
+type = "redis"
+url = "redis://cache.example.com:6379"
+ttl = 3600
+
+[features]
+auth = { enabled = true, jwt_secret = "secret", expire_hours = 24 }
+logging = { level = "info", format = "json", file = "/logs/app.log" }
+metrics = { enabled = true, endpoint = "/metrics" }
+
+[integrations]
+[integrations.payment]
+provider = "stripe"
+api_key = "sk_test_..."
+webhook_secret = "whsec_..."
+
+[integrations.email]
+driver = "smtp"
+host = "smtp.example.com"
+port = 587
+username = "api@example.com"
+```
+
+```rust
+// 定义对应的结构体
+#[derive(Debug, Deserialize)]
+pub struct AppConfig {
+    pub name: String,
+    pub version: String,
+    pub debug: bool,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DatabasePool {
+    pub min: u32,
+    pub max: u32,
+    pub timeout: u32,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DatabaseConfig {
+    pub r#type: String,  // "type" 是关键字，使用 r#type
+    pub host: String,
+    pub port: u16,
+    pub name: String,
+    pub pool: DatabasePool,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct PaymentConfig {
+    pub provider: String,
+    pub api_key: String,
+    pub webhook_secret: String,
+}
+
+// 使用配置
+let app: AppConfig = config.get_section("app")?;
+let db: DatabaseConfig = config.get_section("database")?;
+let payment: PaymentConfig = config.get_section("integrations.payment")?;
+
+// 或者读取单个值
+let cache_ttl: u32 = config.get("cache.ttl")?;
+let jwt_secret: String = config.get("features.auth.jwt_secret")?;
 ```
 
 ## 🔧 开发工具
@@ -678,6 +892,5 @@ impl UserService {
 - [配置系统指南](../../guide/configuration.md)
 - [依赖注入指南](../../guide/dependency-injection.md)
 - [错误处理指南](../../guide/error-handling.md)
-- [**rspring-web 模块**](./rspring-web.md) - Web 相关功能（ApiResponse, 控制器等）
 - [GitHub 仓库](https://github.com/hi-liyan/rspring)
 - [示例代码](../../examples/)
