@@ -154,9 +154,9 @@ pub struct UserRepositoryImpl {
 
 ## 🔗 相关链接
 
-- [GitHub 仓库](https://github.com/rspring/rspring)
+- [GitHub 仓库](https://github.com/hi-liyan/rspring)
 - [crates.io](https://crates.io/crates/rspring-core)
-- [在线文档](https://docs.rs/rspring-core)
+- [在线文档](https://github.com/hi-liyan/rspring)
 - [示例代码](examples/)
 
 ---
